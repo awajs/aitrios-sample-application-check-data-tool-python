@@ -1,30 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>API Test Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask API Test Page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Get Devices
-            $('#getDevices').click(function() {
-                $.get("/api/getDevices", function(data) {
-                    $('#devicesResult').html(JSON.stringify(data));
-                }).fail(function(response) {
-                    $('#devicesResult').html(response.responseText);
-                });
+        function getDevices() {
+            $.get("/api/getDevices", function(data) {
+                $('#devicesResult').text(JSON.stringify(data, null, 2));
+            }).fail(function(error) {
+                $('#devicesResult').text('Error: ' + error.responseText);
             });
+        }
 
-            // Other API calls can be similarly implemented
-        });
+        function getImageDirectories() {
+            var deviceId = $('#deviceIdForDirectories').val();
+            $.get("/api/getImageDirectories", { deviceId: deviceId }, function(data) {
+                $('#directoriesResult').text(JSON.stringify(data, null, 2));
+            }).fail(function(error) {
+                $('#directoriesResult').text('Error: ' + error.responseText);
+            });
+        }
+
+        function getImagesAndInferences() {
+            var deviceId = $('#deviceIdForImages').val();
+            var imagePath = $('#imagePath').val();
+            var numberOfImages = $('#numberOfImages').val();
+            $.get("/api/getImagesAndInferences", { 
+                deviceId: deviceId, 
+                imagePath: imagePath,
+                numberOfImages: numberOfImages 
+            }, function(data) {
+                $('#imagesResult').text(JSON.stringify(data, null, 2));
+            }).fail(function(error) {
+                $('#imagesResult').text('Error: ' + error.responseText);
+            });
+        }
     </script>
 </head>
 <body>
-    <h1>API Test Page</h1>
-    
-    <button id="getDevices">Get Devices</button>
-    <div id="devicesResult"></div>
+    <h1>Flask API Test Page</h1>
 
-    <!-- Additional buttons and divs for other endpoints -->
+    <button onclick="getDevices()">Get Devices</button>
+    <pre id="devicesResult"></pre>
 
+    <input type="text" id="deviceIdForDirectories" placeholder="Enter Device ID">
+    <button onclick="getImageDirectories()">Get Image Directories</button>
+    <pre id="directoriesResult"></pre>
+
+    <input type="text" id="deviceIdForImages" placeholder="Enter Device ID">
+    <input type="text" id="imagePath" placeholder="Enter Image Path">
+    <input type="number" id="numberOfImages" placeholder="Number of Images">
+    <button onclick="getImagesAndInferences()">Get Images and Inferences</button>
+    <pre id="imagesResult"></pre>
 </body>
 </html>
