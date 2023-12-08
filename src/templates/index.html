@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get Devices
+            $('#getDevices').click(function() {
+                $.get("/api/getDevices", function(data) {
+                    $('#devicesResult').html(JSON.stringify(data));
+                }).fail(function(response) {
+                    $('#devicesResult').html(response.responseText);
+                });
+            });
+
+            // Other API calls can be similarly implemented
+        });
+    </script>
+</head>
+<body>
+    <h1>API Test Page</h1>
+    
+    <button id="getDevices">Get Devices</button>
+    <div id="devicesResult"></div>
+
+    <!-- Additional buttons and divs for other endpoints -->
+
+</body>
+</html>

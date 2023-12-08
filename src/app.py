@@ -17,6 +17,7 @@ limitations under the License.
 import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from flask import render_template
 
 from data_loader import get_console_data
 from data_deserializer import get_deserialize_data
@@ -26,8 +27,8 @@ CORS(app)  # setting CORS
 
 
 @app.route("/")
-def hello():
-    return "Flask server is running"
+def home():
+    return render_template('index.html')
 
 
 @app.route("/api/getDevices", methods=["GET"])
