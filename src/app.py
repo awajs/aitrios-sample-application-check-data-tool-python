@@ -22,7 +22,7 @@ from flask import render_template
 from data_loader import get_console_data
 from data_deserializer import get_deserialize_data
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 CORS(app)  # setting CORS
 
 
