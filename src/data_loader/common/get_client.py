@@ -33,7 +33,8 @@ def get_console_client():
     """
 
     setting_file_path = os.path.join(
-        os.getcwd(), "data_loader", "common", "console_access_settings.yaml"
+#        os.getcwd(), "data_loader", "common", "console_access_settings.yaml"
+         os.getcwd(), "src", "data_loader", "common", "console_access_settings.yaml"
     )
     read_console_access_settings_obj = ReadConsoleAccessSettings(setting_file_path)
     config_obj = Config(
