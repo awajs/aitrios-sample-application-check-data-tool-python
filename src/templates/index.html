@@ -32,9 +32,29 @@
                 imagePath: imagePath,
                 numberOfImages: numberOfImages 
             }, function(data) {
-                $('#imagesResult').text(JSON.stringify(data, null, 2));
+                displayImages(data);
             }).fail(function(error) {
                 $('#imagesResult').text('Error: ' + error.responseText);
+            });
+        }
+
+        function displayImages(data) {
+            $('#imagesResult').empty(); // Clear previous results
+            data.forEach(item => {
+                const imageElement = $('<img>', { src: item.image, alt: 'Loaded Image' });
+                $('#imagesResult').append(imageElement);
+    
+                // Optionally display additional data, such as inference data and timestamp
+                if (item.timestamp) {
+                    const timestamp = $('<p>').text(`Timestamp: ${item.timestamp}`);
+                    $('#imagesResult').append(timestamp);
+                }
+    
+                // If there's inference data, display it
+                if (item.inferenceData) {
+                    const inferenceData = JSON.parse(item.inferenceData);
+                    // Display or process the inference data as needed
+                }
             });
         }
     </script>
