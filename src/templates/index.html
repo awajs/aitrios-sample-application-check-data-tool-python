@@ -41,23 +41,78 @@
         function displayImages(data) {
             $('#imagesResult').empty(); // Clear previous results
             data.forEach(item => {
-                const imageElement = $('<img>', { src: item.image, alt: 'Loaded Image' });
-                $('#imagesResult').append(imageElement);
+                const imageContainer = $('<div>', { class: 'image-container' });
+                
+                // Display the image
+                const imageElement = $('<img>', { 
+                    src: item.image, 
+                    alt: 'Loaded Image'
+                }).on('load', function() {
+                    drawBoundingBoxes(this, item.inferenceData);
+                }).on('error', function() {
+                    console.error('Error loading image');
+                });
+                imageContainer.append(imageElement);
     
-                // Optionally display additional data, such as inference data and timestamp
-                if (item.timestamp) {
-                    const timestamp = $('<p>').text(`Timestamp: ${item.timestamp}`);
-                    $('#imagesResult').append(timestamp);
-                }
+                // Display the JSON data for the image
+                const jsonData = $('<pre>').text(JSON.stringify(item, null, 2));
+                imageContainer.append(jsonData);
     
-                // If there's inference data, display it
-                if (item.inferenceData) {
-                    const inferenceData = JSON.parse(item.inferenceData);
-                    // Display or process the inference data as needed
-                }
+                $('#imagesResult').append(imageContainer);
+    
+                // Logging to check if image data is received
+                console.log('Image Data:', item.image);
             });
         }
+    
+        function drawBoundingBoxes(imgElement, inferenceData) {
+            const canvas = $('<canvas>').attr({
+                width: imgElement.width,
+                height: imgElement.height
+            }).css({
+                position: 'absolute',
+                left: $(imgElement).offset().left - $(imgElement).parent().offset().left,
+                top: $(imgElement).offset().top - $(imgElement).parent().offset().top
+            });
+        
+            $(imgElement).parent().append(canvas); // Append canvas to the image container
+            const ctx = canvas[0].getContext('2d');
+        
+            // Parse the inference data
+            const inferences = JSON.parse(inferenceData);
+            Object.values(inferences).forEach(obj => {
+                Object.values(obj).forEach(data => {
+                    const { X, Y, x, y, C, P } = data;
+                    // Draw the bounding box
+                    ctx.beginPath();
+                    ctx.rect(X, Y, x - X, y - Y);
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+        
+                    // Draw the label
+                    const label = `C: ${C}, P: ${P.toFixed(2)}`;
+                    ctx.fillStyle = 'red';
+                    ctx.font = '14px Arial';
+                    ctx.fillText(label, X, Y - 10);
+                });
+            });
+        }
+        
+        
     </script>
+    <style>
+        .image-container {
+            position: relative;
+            display: inline-block;
+        }
+        .image-container canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+    
 </head>
 <body>
     <h1>Flask API Test Page</h1>
